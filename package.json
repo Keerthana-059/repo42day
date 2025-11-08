@@ -1,0 +1,15 @@
+{
+  "name": "crypto-edu-playground",
+  "version": "1.0.0",
+  "description": "Offline desktop app: DES (demo), RSA, Diffie–Hellman (ECDH), ElGamal (demo), SHA.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "electron --version || echo \"Electron will be downloaded on first run\""
+  },
+  "author": "ChatGPT",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

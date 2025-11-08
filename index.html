@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptography Playground — DES • RSA • DH • ElGamal • SHA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>🔐 Cryptography Playground</h1>
+    <div class="theme-controls" role="group" aria-label="Theme toggle">
+      <button id="theme-auto" class="theme-btn" aria-pressed="true" title="Match system">Auto</button>
+      <button id="theme-light" class="theme-btn" aria-pressed="false" title="Light theme">Light</button>
+      <button id="theme-dark" class="theme-btn" aria-pressed="false" title="Dark theme">Dark</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Algorithms">
+    <button class="tab active" data-tab="des" role="tab" aria-selected="true">DES</button>
+    <button class="tab" data-tab="rsa" role="tab" aria-selected="false">RSA</button>
+    <button class="tab" data-tab="dh" role="tab" aria-selected="false">Diffie–Hellman</button>
+    <button class="tab" data-tab="elgamal" role="tab" aria-selected="false">ElGamal</button>
+    <button class="tab" data-tab="sha" role="tab" aria-selected="false">SHA</button>
+  </nav>
+
+  <main>
+    <!-- DES -->
+    <section id="panel-des" class="panel active" role="tabpanel">
+      <div class="card">
+        <h2>DES (Educational Feistel Demo)</h2>
+        <p class="note">This is a simplified DES-like Feistel demo. For learning only.</p>
+        <label for="des-key">Key (8–32 chars):</label>
+        <input id="des-key" class="input" placeholder="Enter key…" />
+        <label for="des-pt">Plaintext</label>
+        <textarea id="des-pt" class="input" rows="4" placeholder="Type message to encrypt…"></textarea>
+        <div class="buttons">
+          <button id="des-encrypt" class="primary">Encrypt</button>
+          <button id="des-decrypt" class="secondary">Decrypt</button>
+          <button id="des-clear" class="ghost">Clear</button>
+        </div>
+        <label for="des-ct">Encrypted (Base64)</label>
+        <textarea id="des-ct" class="output" rows="3" readonly></textarea>
+        <label for="des-dt">Decrypted</label>
+        <textarea id="des-dt" class="output" rows="3" readonly></textarea>
+      </div>
+    </section>
+
+    <!-- RSA -->
+    <section id="panel-rsa" class="panel" role="tabpanel">
+      <div class="card">
+        <h2>RSA (Web Crypto: RSA-OAEP)</h2>
+        <p class="note">Generate a keypair, then encrypt and decrypt.</p>
+        <div class="grid-2">
+          <div>
+            <div class="buttons">
+              <button id="rsa-gen" class="primary">Generate Keys</button>
+              <button id="rsa-export" class="secondary">Export Keys</button>
+              <button id="rsa-import" class="ghost">Import Keys</button>
+            </div>
+            <textarea id="rsa-jwk" class="input mono" rows="8" placeholder="Exported JWK will appear here…"></textarea>
+          </div>
+          <div>
+            <label for="rsa-pt">Plaintext</label>
+            <textarea id="rsa-pt" class="input" rows="4"></textarea>
+            <div class="buttons">
+              <button id="rsa-encrypt" class="primary">Encrypt</button>
+              <button id="rsa-decrypt" class="secondary">Decrypt</button>
+              <button id="rsa-clear" class="ghost">Clear</button>
+            </div>
+            <label for="rsa-ct">Encrypted (Base64)</label>
+            <textarea id="rsa-ct" class="output mono" rows="3" readonly></textarea>
+            <label for="rsa-dt">Decrypted</label>
+            <textarea id="rsa-dt" class="output" rows="3" readonly></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DH -->
+    <section id="panel-dh" class="panel" role="tabpanel">
+      <div class="card">
+        <h2>Diffie–Hellman (ECDH P-256 + AES-GCM)</h2>
+        <div class="grid-2">
+          <div>
+            <h3>Alice</h3>
+            <button id="dh-alice-gen" class="primary">Generate Alice Key</button>
+            <textarea id="dh-alice-pub" class="input mono" rows="5" placeholder="Alice public key JWK"></textarea>
+          </div>
+          <div>
+            <h3>Bob</h3>
+            <button id="dh-bob-gen" class="primary">Generate Bob Key</button>
+            <textarea id="dh-bob-pub" class="input mono" rows="5" placeholder="Bob public key JWK"></textarea>
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="dh-derive" class="secondary">Derive Shared Secret</button>
+        </div>
+        <label for="dh-secret">Shared Secret (Base64)</label>
+        <textarea id="dh-secret" class="output mono" rows="2" readonly></textarea>
+        <h3>Encrypt with Shared Secret (AES-GCM)</h3>
+        <label for="dh-msg">Message</label>
+        <textarea id="dh-msg" class="input" rows="3"></textarea>
+        <div class="buttons">
+          <button id="dh-encrypt" class="primary">Encrypt</button>
+          <button id="dh-decrypt" class="secondary">Decrypt</button>
+          <button id="dh-clear" class="ghost">Clear</button>
+        </div>
+        <label for="dh-ct">Ciphertext (Base64)</label>
+        <textarea id="dh-ct" class="output mono" rows="3" readonly></textarea>
+        <label for="dh-dt">Decrypted</label>
+        <textarea id="dh-dt" class="output rows=3" readonly></textarea>
+      </div>
+    </section>
+
+    <!-- ElGamal (Educational) -->
+    <section id="panel-elgamal" class="panel" role="tabpanel">
+      <div class="card">
+        <h2>ElGamal (Educational)</h2>
+        <p class="note">Simplified ElGamal-style demo with BigInt math.</p>
+        <label for="elg-p">Prime p (hex)</label>
+        <textarea id="elg-p" class="input mono" rows="2"></textarea>
+        <label for="elg-g">Generator g (hex)</label>
+        <input id="elg-g" class="input mono" />
+        <div class="buttons">
+          <button id="elg-gen" class="primary">Generate Key</button>
+        </div>
+        <label for="elg-y">Public y (hex)</label>
+        <textarea id="elg-y" class="output mono" rows="2" readonly></textarea>
+        <label for="elg-x">Private x (hex)</label>
+        <textarea id="elg-x" class="output mono" rows="2" readonly></textarea>
+
+        <h3>Encrypt / Decrypt</h3>
+        <label for="elg-pt">Plaintext</label>
+        <textarea id="elg-pt" class="input" rows="3"></textarea>
+        <div class="buttons">
+          <button id="elg-encrypt" class="primary">Encrypt</button>
+          <button id="elg-decrypt" class="secondary">Decrypt</button>
+          <button id="elg-clear" class="ghost">Clear</button>
+        </div>
+        <label for="elg-ct">Ciphertext (Base64 of JSON)</label>
+        <textarea id="elg-ct" class="output mono" rows="3" readonly></textarea>
+        <label for="elg-dt">Decrypted</label>
+        <textarea id="elg-dt" class="output" rows="3" readonly></textarea>
+      </div>
+    </section>
+
+    <!-- SHA -->
+    <section id="panel-sha" class="panel" role="tabpanel">
+      <div class="card">
+        <h2>SHA Hash</h2>
+        <div class="grid-2">
+          <div>
+            <label for="sha-input">Input</label>
+            <textarea id="sha-input" class="input" rows="5"></textarea>
+          </div>
+          <div>
+            <label for="sha-algo">Algorithm</label>
+            <select id="sha-algo" class="input">
+              <option value="SHA-256">SHA-256</option>
+              <option value="SHA-1">SHA-1</option>
+            </select>
+            <div class="buttons">
+              <button id="sha-hash" class="primary">Hash</button>
+              <button id="sha-clear" class="ghost">Clear</button>
+            </div>
+            <label for="sha-output">Digest (hex)</label>
+            <textarea id="sha-output" class="output mono" rows="5" readonly></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Built for learning — works fully offline in this desktop app.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
