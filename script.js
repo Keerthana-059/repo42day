@@ -70,13 +70,11 @@ tabs.forEach(tab => tab.addEventListener('click', () => {
   let keyPair=null;
   async function gen(){ keyPair=await crypto.subtle.generateKey({name:"RSA-OAEP", modulusLength:2048, publicExponent:new Uint8Array([1,0,1]), hash:"SHA-256"}, true, ["encrypt","decrypt"]); alert("RSA keys generated"); }
   async function exportKeys(){ if(!keyPair) return alert("Generate keys first"); const pub=await crypto.subtle.exportKey("jwk", keyPair.publicKey); const priv=await crypto.subtle.exportKey("jwk", keyPair.privateKey); $("#rsa-jwk").value = JSON.stringify({public:pub, private:priv}, null, 2); }
-  async function importKeys(){ try{ const obj=JSON.parse($("#rsa-jwk").value); const pub=await crypto.subtle.importKey("jwk", obj.public, {name:"RSA-OAEP", hash:"SHA-256"}, true, ["encrypt"]); const priv=await crypto.subtle.importKey("jwk", obj.private, {name:"RSA-OAEP", hash:"SHA-256"}, true, ["decrypt"]); keyPair={publicKey:pub, privateKey:priv}; alert("Keys imported"); }catch(e){ alert("Import failed: "+e.message);} }
   async function encrypt(){ if(!keyPair) return alert("Generate or import keys first"); const data=enc.encode($("#rsa-pt").value||''); const ct=new Uint8Array(await crypto.subtle.encrypt({name:"RSA-OAEP"}, keyPair.publicKey, data)); $("#rsa-ct").value = toB64(ct); $("#rsa-dt").value=''; }
   async function decrypt(){ if(!keyPair) return alert("Generate or import keys first"); try{ const c=fromB64($("#rsa-ct").value.trim()); const p=await crypto.subtle.decrypt({name:"RSA-OAEP"}, keyPair.privateKey, c); $("#rsa-dt").value = dec.decode(p); }catch(e){ $("#rsa-dt").value = "Decryption failed: "+e.message; } }
   function clearAll(){ $("#rsa-pt").value=''; $("#rsa-ct").value=''; $("#rsa-dt").value=''; $("#rsa-jwk").value=''; }
   $("#rsa-gen").addEventListener('click', gen);
   $("#rsa-export").addEventListener('click', exportKeys);
-  $("#rsa-import").addEventListener('click', importKeys);
   $("#rsa-encrypt").addEventListener('click', encrypt);
   $("#rsa-decrypt").addEventListener('click', decrypt);
   $("#rsa-clear").addEventListener('click', clearAll);
